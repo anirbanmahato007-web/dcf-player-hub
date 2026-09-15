@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DCF | PLAYER HUB — Official Football Squad Database</title>
+  <link rel="icon" href="/static/img/dcf-logo.jpg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand-link" onclick="switchView('home'); return false;">
+        <img src="/static/img/dcf-logo.jpg" alt="DCF Logo" class="brand-logo">
+        <div>
+          <div class="brand-title">DCF <span class="text-green">| PLAYER HUB</span></div>
+          <div class="brand-sub">One Club. One Squad. One Identity.</div>
+        </div>
+      </a>
+      
+      <button class="mobile-toggle" id="mobile-toggle-btn">☰</button>
+
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="#" class="nav-link active" id="nav-home" onclick="switchView('home'); return false;">HOME</a></li>
+        <li><a href="#" class="nav-link" id="nav-squad" onclick="switchView('squad'); return false;">DCF SQUAD</a></li>
+        <li><a href="#" class="nav-link" id="nav-register" onclick="switchView('register'); return false;">REGISTER</a></li>
+        <li><a href="#" class="nav-link" id="nav-admin" onclick="switchView('admin'); return false;">ADMIN</a></li>
+        <li>
+          <a href="#" class="btn-nav-primary" onclick="switchView('register'); return false;">
+            <span>REGISTER AS PLAYER</span> →
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- APP MAIN CONTAINER -->
+  <main id="app-main">
+
+    <!-- ==================== HOME VIEW ==================== -->
+    <section id="view-home" class="view-section">
+      <!-- Hero -->
+      <div class="hero-section">
+        <div class="hero-content">
+          <div class="hero-badge">OFFICIAL DCF FOOTBALL CLUB DATABASE</div>
+          <h1 class="hero-title">WELCOME TO <span class="text-green">DCF PLAYER HUB</span></h1>
+          <p class="hero-subtitle">
+            Register your player profile and become part of the official DCF squad database. BUILT FOR THE SQUAD.
+          </p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" onclick="switchView('register')">REGISTER AS A PLAYER →</button>
+            <button class="btn btn-secondary" onclick="switchView('squad')">VIEW DCF SQUAD</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Quick Stats Bar -->
+      <div class="stats-summary-bar">
+        <div class="stat-card">
+          <div class="stat-value" id="home-stat-total">--</div>
+          <div class="stat-label">TOTAL PLAYERS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value text-green" id="home-stat-active">--</div>
+          <div class="stat-label">ACTIVE PLAYERS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #EF4444;" id="home-stat-injured">--</div>
+          <div class="stat-label">INJURED</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #F59E0B;" id="home-stat-trial">--</div>
+          <div class="stat-label">TRIAL PLAYERS</div>
+        </div>
+      </div>
+
+      <!-- Featured Squad Section -->
+      <div style="max-width: 1280px; margin: 4rem auto 0; padding: 0 1.5rem;">
+        <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; color: var(--accent-green-bright); text-transform: uppercase;">ROSTER PREVIEW</div>
+            <h2 class="font-heading" style="font-size: 2.8rem; line-height: 1;">THE DCF SQUAD</h2>
+          </div>
+          <button class="btn btn-outline-green" onclick="switchView('squad')">VIEW FULL SQUAD →</button>
+        </div>
+
+        <div class="squad-grid" id="home-featured-grid">
+          <!-- Dynamically loaded player cards -->
+        </div>
+
+        <!-- Position Breakdown Cards -->
+        <div style="margin-top: 4rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem;">
+          <h3 class="font-heading" style="font-size: 1.8rem; margin-bottom: 1.5rem;">SQUAD POSITION BREAKDOWN</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+            <div style="background: var(--bg-charcoal); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 8px; text-align: center;">
+              <div style="font-family: var(--font-heading); font-size: 2.2rem;" id="breakdown-gk">0</div>
+              <div style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; color: var(--text-muted);">GOALKEEPERS</div>
+            </div>
+            <div style="background: var(--bg-charcoal); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 8px; text-align: center;">
+              <div style="font-family: var(--font-heading); font-size: 2.2rem;" id="breakdown-def">0</div>
+              <div style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; color: var(--text-muted);">DEFENDERS</div>
+            </div>
+            <div style="background: var(--bg-charcoal); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 8px; text-align: center;">
+              <div style="font-family: var(--font-heading); font-size: 2.2rem;" id="breakdown-mid">0</div>
+              <div style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; color: var(--text-muted);">MIDFIELDER</div>
+            </div>
+            <div style="background: var(--bg-charcoal); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 8px; text-align: center;">
+              <div style="font-family: var(--font-heading); font-size: 2.2rem;" id="breakdown-fwd">0</div>
+              <div style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; color: var(--text-muted);">FORWARDS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== REGISTRATION VIEW ==================== -->
+    <section id="view-register" class="view-section" style="display: none; padding: 3rem 1.5rem;">
+      <div style="max-width: 900px; margin: 0 auto;">
+
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+          <div style="font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; color: var(--accent-green-bright); text-transform: uppercase;">OFFICIAL ONBOARDING</div>
+          <h1 class="font-heading" style="font-size: 3.2rem; line-height: 1;">PLAYER REGISTRATION FORM</h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">Submit your player information to enter the official DCF Football Club roster.</p>
+        </div>
+
+        <!-- Onboarding Progress Indicator -->
+        <div class="registration-stepper">
+          <div class="stepper-line"></div>
+          <div class="stepper-progress" id="stepper-progress-bar" style="width: 0%;"></div>
+
+          <div class="step-item active" id="step-node-1" onclick="jumpToStep(1)">
+            <div class="step-circle">01</div>
+            <div class="step-title">IDENTITY</div>
+          </div>
+          <div class="step-item" id="step-node-2" onclick="jumpToStep(2)">
+            <div class="step-circle">02</div>
+            <div class="step-title">PROFILE</div>
+          </div>
+          <div class="step-item" id="step-node-3" onclick="jumpToStep(3)">
+            <div class="step-circle">03</div>
+            <div class="step-title">JERSEY</div>
+          </div>
+          <div class="step-item" id="step-node-4" onclick="jumpToStep(4)">
+            <div class="step-circle">04</div>
+            <div class="step-title">STATUS</div>
+          </div>
+          <div class="step-item" id="step-node-5" onclick="jumpToStep(5)">
+            <div class="step-circle">05</div>
+            <div class="step-title">PHOTO</div>
+          </div>
+          <div class="step-item" id="step-node-6">
+            <div class="step-circle">06</div>
+            <div class="step-title">CONFIRM</div>
+          </div>
+        </div>
+
+        <!-- Registration Form Container -->
+        <form id="registration-form" onsubmit="handleRegistrationSubmit(event)">
+
+          <!-- STEP 1: IDENTITY -->
+          <div class="form-section-card step-panel" id="step-panel-1">
+            <div class="form-section-header">
+              <span class="form-section-num">01</span>
+              <span class="form-section-title">PLAYER IDENTITY</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-name">Full Player Name <span class="required">*</span></label>
+              <input type="text" id="reg-name" class="form-control" placeholder="e.g. Rahul Singh" required>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+              <button type="button" class="btn btn-primary" onclick="nextStep(2)">NEXT: PLAYING PROFILE →</button>
+            </div>
+          </div>
+
+          <!-- STEP 2: PLAYING PROFILE -->
+          <div class="form-section-card step-panel" id="step-panel-2" style="display: none;">
+            <div class="form-section-header">
+              <span class="form-section-num">02</span>
+              <span class="form-section-title">PLAYING PROFILE</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-primary-pos">Primary Position <span class="required">*</span></label>
+              <select id="reg-primary-pos" class="form-select" onchange="updatePlayingPositionChips()" required>
+                <option value="" disabled selected>Select primary position...</option>
+                <option value="Goalkeeper">Goalkeeper</option>
+                <option value="Defender">Defender</option>
+                <option value="Midfielder">Midfielder</option>
+                <option value="Forward">Forward</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Position(s) of Play <span class="required">*</span> (Select all that apply)</label>
+              <div class="position-chips-grid" id="playing-positions-grid">
+                <!-- Dynamically populated chips -->
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-strong-foot">Strong Foot <span class="required">*</span></label>
+              <select id="reg-strong-foot" class="form-select" required>
+                <option value="" disabled selected>Select strong foot...</option>
+                <option value="Right">Right</option>
+                <option value="Left">Left</option>
+                <option value="Both">Both</option>
+              </select>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+              <button type="button" class="btn btn-secondary" onclick="nextStep(1)">← BACK</button>
+              <button type="button" class="btn btn-primary" onclick="nextStep(3)">NEXT: JERSEY NUMBER →</button>
+            </div>
+          </div>
+
+          <!-- STEP 3: JERSEY -->
+          <div class="form-section-card step-panel" id="step-panel-3" style="display: none;">
+            <div class="form-section-header">
+              <span class="form-section-num">03</span>
+              <span class="form-section-title">JERSEY PREFERENCE</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-jersey-num">Preferred Jersey Number (1–99) <span class="required">*</span></label>
+              <input type="number" id="reg-jersey-num" class="form-control" min="1" max="99" placeholder="e.g. 10" required>
+              <div class="form-helper">Preferred number only. Final jersey number is subject to club availability.</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+              <button type="button" class="btn btn-secondary" onclick="nextStep(2)">← BACK</button>
+              <button type="button" class="btn btn-primary" onclick="nextStep(4)">NEXT: PLAYER STATUS →</button>
+            </div>
+          </div>
+
+          <!-- STEP 4: PLAYER STATUS -->
+          <div class="form-section-card step-panel" id="step-panel-4" style="display: none;">
+            <div class="form-section-header">
+              <span class="form-section-num">04</span>
+              <span class="form-section-title">CURRENT PLAYER STATUS</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-status">Current Status <span class="required">*</span></label>
+              <select id="reg-status" class="form-select" required>
+                <option value="Active" selected>🟢 Active</option>
+                <option value="Injured">🔴 Injured</option>
+                <option value="Unavailable">⚪ Unavailable</option>
+                <option value="Trial">🟡 Trial</option>
+                <option value="New Player">🔵 New Player</option>
+                <option value="Temporarily Inactive">🔘 Temporarily Inactive</option>
+              </select>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+              <button type="button" class="btn btn-secondary" onclick="nextStep(3)">← BACK</button>
+              <button type="button" class="btn btn-primary" onclick="nextStep(5)">NEXT: PLAYER PHOTO →</button>
+            </div>
+          </div>
+
+          <!-- STEP 5: PHOTO UPLOAD -->
+          <div class="form-section-card step-panel" id="step-panel-5" style="display: none;">
+            <div class="form-section-header">
+              <span class="form-section-num">05</span>
+              <span class="form-section-title">UPLOAD PLAYER PHOTO</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Player Portrait (3:4 Ratio) <span class="required">*</span></label>
+              
+              <div class="photo-upload-box" id="upload-dropzone" onclick="document.getElementById('reg-photo-input').click()">
+                <div class="photo-preview-container" id="photo-preview-box">
+                  <div class="photo-placeholder" id="photo-placeholder">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span style="font-size: 0.85rem; font-weight: 700;">Click to upload player photo</span>
+                    <span style="font-size: 0.75rem;">JPG, JPEG, PNG or WEBP (Max 5MB)</span>
+                  </div>
+                  <img id="photo-preview-img" class="photo-preview-img" style="display: none;" alt="Player Preview">
+                </div>
+
+                <div id="replace-photo-btn-container" style="display: none; margin-top: 0.5rem;">
+                  <button type="button" class="btn btn-outline-green" style="padding: 0.4rem 1rem; font-size: 0.8rem;">REPLACE PHOTO</button>
+                </div>
+
+                <input type="file" id="reg-photo-input" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handlePhotoSelect(event)">
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+              <button type="button" class="btn btn-secondary" onclick="nextStep(4)">← BACK</button>
+              <button type="submit" class="btn btn-primary" id="btn-submit-form" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+                SUBMIT PLAYER PROFILE
+              </button>
+            </div>
+          </div>
+
+        </form>
+
+        <!-- STEP 6: CONFIRMATION DISPLAY (Hidden initially) -->
+        <div class="form-section-card step-panel" id="step-panel-6" style="display: none; text-align: center; padding: 4rem 2rem;">
+          <div style="width: 80px; height: 80px; background: rgba(34, 197, 94, 0.15); border: 2px solid var(--accent-green-bright); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+            <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="var(--accent-green-bright)">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          <h2 class="font-heading" style="font-size: 3rem; color: var(--accent-green-bright);">PLAYER PROFILE REGISTERED</h2>
+          <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 550px; margin: 0.75rem auto 2rem;">
+            Your information has been successfully added to the DCF Player Database.
+          </p>
+
+          <div style="background: var(--bg-charcoal); border: 1px dashed var(--accent-green); border-radius: 10px; padding: 1.25rem; display: inline-block; margin-bottom: 2.5rem;">
+            <div style="font-size: 0.75rem; font-weight: 800; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;">OFFICIAL PLAYER IDENTIFIER</div>
+            <div class="font-heading" id="registered-player-id" style="font-size: 3.5rem; color: #FFFFFF; letter-spacing: 3px;">DCF-XXX</div>
+          </div>
+
+          <div>
+            <button class="btn btn-primary" onclick="switchView('squad')">VIEW DCF SQUAD</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SQUAD VIEW ==================== -->
+    <section id="view-squad" class="view-section" style="display: none; max-width: 1280px; margin: 0 auto; padding: 3rem 1.5rem;">
+      <!-- Squad Page Header -->
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem;">
+        <div>
+          <div style="font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; color: var(--accent-green-bright); text-transform: uppercase;">OFFICIAL ROSTER</div>
+          <h1 class="font-heading" style="font-size: 3.5rem; line-height: 1;">DCF SQUAD</h1>
+        </div>
+        <button class="btn btn-primary" onclick="switchView('register')">+ REGISTER AS A PLAYER</button>
+      </div>
+
+      <!-- Search & Multi-Filter Controls Bar -->
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 2.5rem;">
+        
+        <!-- Search Input -->
+        <div style="position: relative; margin-bottom: 1.25rem;">
+          <input type="text" id="squad-search-input" class="form-control" style="padding-left: 3rem; font-size: 1.05rem;" placeholder="Search players by name, ID, jersey number, position..." oninput="handleSquadSearchFilter()">
+          <svg style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; stroke: var(--text-dim);" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+
+        <!-- Filter Dropdowns Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Primary Position</label>
+            <select id="filter-primary-pos" class="form-select" onchange="handleSquadSearchFilter()">
+              <option value="All">All Positions</option>
+              <option value="Goalkeeper">Goalkeeper</option>
+              <option value="Defender">Defender</option>
+              <option value="Midfielder">Midfielder</option>
+              <option value="Forward">Forward</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Specific Position</label>
+            <select id="filter-specific-pos" class="form-select" onchange="handleSquadSearchFilter()">
+              <option value="All">All Specific Positions</option>
+              <option value="GK">GK</option>
+              <option value="CB">CB</option>
+              <option value="LB">LB</option>
+              <option value="RB">RB</option>
+              <option value="LWB">LWB</option>
+              <option value="RWB">RWB</option>
+              <option value="Sweeper">Sweeper</option>
+              <option value="CDM">CDM</option>
+              <option value="CM">CM</option>
+              <option value="CAM">CAM</option>
+              <option value="LM">LM</option>
+              <option value="RM">RM</option>
+              <option value="LW">LW</option>
+              <option value="RW">RW</option>
+              <option value="ST">ST</option>
+              <option value="CF">CF</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Strong Foot</label>
+            <select id="filter-strong-foot" class="form-select" onchange="handleSquadSearchFilter()">
+              <option value="All">All Feet</option>
+              <option value="Right">Right</option>
+              <option value="Left">Left</option>
+              <option value="Both">Both</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" style="font-size: 0.75rem;">Player Status</label>
+            <select id="filter-status" class="form-select" onchange="handleSquadSearchFilter()">
+              <option value="All">All Statuses</option>
+              <option value="Active">🟢 Active</option>
+              <option value="Injured">🔴 Injured</option>
+              <option value="Unavailable">⚪ Unavailable</option>
+              <option value="Trial">🟡 Trial</option>
+              <option value="New Player">🔵 New Player</option>
+              <option value="Temporarily Inactive">🔘 Temporarily Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Squad Cards Grid Container -->
+      <div class="squad-grid" id="squad-cards-grid">
+        <!-- Loaded via JS -->
+      </div>
+
+      <!-- Empty States -->
+      <div id="empty-state-no-squad" style="display: none; text-align: center; padding: 5rem 1.5rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px;">
+        <h2 class="font-heading" style="font-size: 3rem; margin-bottom: 0.5rem;">THE SQUAD IS WAITING.</h2>
+        <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">Be the first DCF player to register your profile.</p>
+        <button class="btn btn-primary" onclick="switchView('register')">REGISTER PLAYER</button>
+      </div>
+
+      <div id="empty-state-no-results" style="display: none; text-align: center; padding: 5rem 1.5rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px;">
+        <h2 class="font-heading" style="font-size: 3rem; margin-bottom: 0.5rem; color: #EF4444;">NO PLAYER FOUND</h2>
+        <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">Try another name, position or jersey number.</p>
+        <button class="btn btn-secondary" onclick="resetSquadFilters()">RESET FILTERS</button>
+      </div>
+    </section>
+
+    <!-- ==================== ADMIN VIEW ==================== -->
+    <section id="view-admin" class="view-section" style="display: none; max-width: 1280px; margin: 0 auto; padding: 3rem 1.5rem;">
+      
+      <!-- Admin Login Form (if not logged in) -->
+      <div id="admin-login-box" style="max-width: 450px; margin: 3rem auto; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 2.5rem; text-align: center;">
+        <img src="/static/img/dcf-logo.jpg" style="height: 60px; margin-bottom: 1rem;" alt="DCF Logo">
+        <h2 class="font-heading" style="font-size: 2.5rem;">ADMIN AUTHENTICATION</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem;">DCF Club Management Portal</p>
+
+        <form onsubmit="handleAdminLogin(event)">
+          <div class="form-group" style="text-align: left;">
+            <label class="form-label">Password</label>
+            <input type="password" id="admin-password-input" class="form-control" placeholder="Enter admin password..." required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">LOGIN TO DASHBOARD</button>
+        </form>
+      </div>
+
+      <!-- Admin Dashboard Container (shown when logged in) -->
+      <div id="admin-dashboard-box" style="display: none;">
+        
+        <div style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem;">
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; color: var(--accent-green-bright); text-transform: uppercase;">MANAGEMENT PORTAL</div>
+            <h1 class="font-heading" style="font-size: 3.5rem; line-height: 1;">ADMIN DASHBOARD</h1>
+          </div>
+          <div style="display: flex; gap: 1rem;">
+            <button class="btn btn-outline-green" onclick="exportAdminCSV()">EXPORT PLAYER DATABASE (CSV)</button>
+            <button class="btn btn-secondary" onclick="adminLogout()">LOGOUT</button>
+          </div>
+        </div>
+
+        <!-- Jersey Conflict Warning Banner -->
+        <div id="jersey-conflict-alert" class="conflict-alert-box" style="display: none;">
+          <span style="font-size: 1.5rem;">⚠️</span>
+          <div>
+            <div style="font-weight: 800; font-size: 0.95rem; text-transform: uppercase;" id="jersey-conflict-text">Jersey Conflict Detected</div>
+            <div style="font-size: 0.85rem; opacity: 0.9;" id="jersey-conflict-sub">Admin can assign Official Jersey Numbers below.</div>
+          </div>
+        </div>
+
+        <!-- Analytics Dashboard Counters -->
+        <div class="stats-summary-bar" style="margin: 0 0 3rem; padding: 0;">
+          <div class="stat-card">
+            <div class="stat-value" id="admin-stat-total">0</div>
+            <div class="stat-label">TOTAL PLAYERS</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value text-green" id="admin-stat-active">0</div>
+            <div class="stat-label">ACTIVE PLAYERS</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: #EF4444;" id="admin-stat-injured">0</div>
+            <div class="stat-label">INJURED</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: #9CA3AF;" id="admin-stat-unavailable">0</div>
+            <div class="stat-label">UNAVAILABLE</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: #F59E0B;" id="admin-stat-trial">0</div>
+            <div class="stat-label">TRIAL PLAYERS</div>
+          </div>
+        </div>
+
+        <!-- Position Breakdown Row -->
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem 2rem; margin-bottom: 2.5rem; display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 1rem;">
+          <div><span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">GK:</span> <strong style="font-size: 1.2rem; margin-left: 0.4rem;" id="admin-pos-gk">0</strong></div>
+          <div><span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">DEFENDERS:</span> <strong style="font-size: 1.2rem; margin-left: 0.4rem;" id="admin-pos-def">0</strong></div>
+          <div><span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">MIDFIELDERS:</span> <strong style="font-size: 1.2rem; margin-left: 0.4rem;" id="admin-pos-mid">0</strong></div>
+          <div><span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700;">FORWARDS:</span> <strong style="font-size: 1.2rem; margin-left: 0.4rem;" id="admin-pos-fwd">0</strong></div>
+        </div>
+
+        <!-- Admin Player Table -->
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>PHOTO</th>
+                <th>ID</th>
+                <th>PLAYER NAME</th>
+                <th>POSITION</th>
+                <th>PREF / OFF JERSEY</th>
+                <th>STRONG FOOT</th>
+                <th>STATUS</th>
+                <th style="text-align: right;">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="admin-players-tbody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== PLAYER PROFILE MODAL ==================== -->
+  <div class="modal-overlay" id="player-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closePlayerModal()">✕</button>
+      <div id="player-modal-content">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADMIN EDIT PLAYER MODAL ==================== -->
+  <div class="modal-overlay" id="admin-edit-modal">
+    <div class="modal-card" style="max-width: 650px;">
+      <button class="modal-close" onclick="closeAdminEditModal()">✕</button>
+      <div style="padding: 2rem;">
+        <h2 class="font-heading" style="font-size: 2.2rem; margin-bottom: 1.5rem;">EDIT PLAYER RECORD</h2>
+        
+        <form id="admin-edit-form" onsubmit="handleAdminUpdateSubmit(event)">
+          <input type="hidden" id="edit-player-id">
+
+          <div class="form-group">
+            <label class="form-label">Player Name</label>
+            <input type="text" id="edit-name" class="form-control" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Primary Position</label>
+              <select id="edit-primary-pos" class="form-select" required>
+                <option value="Goalkeeper">Goalkeeper</option>
+                <option value="Defender">Defender</option>
+                <option value="Midfielder">Midfielder</option>
+                <option value="Forward">Forward</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Strong Foot</label>
+              <select id="edit-strong-foot" class="form-select" required>
+                <option value="Right">Right</option>
+                <option value="Left">Left</option>
+                <option value="Both">Both</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Specific Position(s) (e.g. CM, CAM)</label>
+            <input type="text" id="edit-playing-positions" class="form-control" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Preferred Jersey #</label>
+              <input type="number" id="edit-pref-jersey" class="form-control" min="1" max="99" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official Jersey # (Admin Only)</label>
+              <input type="number" id="edit-off-jersey" class="form-control" min="1" max="99" placeholder="Unassigned">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Player Status</label>
+            <select id="edit-status" class="form-select" required>
+              <option value="Active">🟢 Active</option>
+              <option value="Injured">🔴 Injured</option>
+              <option value="Unavailable">⚪ Unavailable</option>
+              <option value="Trial">🟡 Trial</option>
+              <option value="New Player">🔵 New Player</option>
+              <option value="Temporarily Inactive">🔘 Temporarily Inactive</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Replace Photo (Optional)</label>
+            <input type="file" id="edit-photo-input" class="form-control" accept="image/*">
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeAdminEditModal()">CANCEL</button>
+            <button type="submit" class="btn btn-primary">SAVE CHANGES</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <img src="/static/img/dcf-logo.jpg" style="height: 32px;" alt="DCF Logo">
+        <span class="font-heading" style="font-size: 1.2rem;">DCF | PLAYER HUB</span>
+      </div>
+      <div style="color: var(--text-dim); font-size: 0.8rem;">
+        © 2026 DCF Football Club. All Rights Reserved. "One Club. One Squad. One Identity."
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#151515"/>
+      <stop offset="100%" stop-color="#0A0A0A"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#16A34A"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer Shield -->
+  <path d="M 100 10 L 175 40 V 110 C 175 155 100 190 100 190 C 100 190 25 155 25 110 V 40 Z" fill="url(#shieldGrad)" stroke="#16A34A" stroke-width="4"/>
+  <!-- Inner Shield Border -->
+  <path d="M 100 20 L 165 48 V 108 C 165 148 100 178 100 178 C 100 178 35 148 35 108 V 48 Z" fill="none" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="2"/>
+  <!-- Football Graphic -->
+  <circle cx="100" cy="70" r="22" fill="none" stroke="#16A34A" stroke-width="2"/>
+  <polygon points="100,56 108,62 105,72 95,72 92,62" fill="#16A34A"/>
+  <!-- DCF Text -->
+  <text x="100" y="132" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="38" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">DCF</text>
+  <text x="100" y="152" font-family="Arial, sans-serif" font-size="10" font-weight="900" fill="#16A34A" text-anchor="middle" letter-spacing="2">FOOTBALL CLUB</text>
+  <rect x="70" y="160" width="60" height="3" fill="url(#greenGrad)" rx="1.5"/>
+</svg>
