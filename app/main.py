@@ -39,7 +39,7 @@ app.mount("/uploads", StaticFiles(directory=os.path.join(BASE_DIR, "uploads")), 
 def startup_event():
     init_db()
 
-@app.get("/", response_class=HTMLResponse)
+@app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
 def read_root():
     index_file = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_file):
