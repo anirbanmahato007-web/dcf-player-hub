@@ -114,13 +114,11 @@ async def register_player(
     if len(contents) > 5 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="Player photo size must not exceed 5MB.")
 
-    # Save photo to disk
-    unique_filename = f"player_{uuid.uuid4().hex[:12]}{file_ext}"
-    photo_path = os.path.join(UPLOADS_DIR, unique_filename)
-    with open(photo_path, "wb") as f:
-        f.write(contents)
-
-    photo_url = f"/uploads/players/{unique_filename}"
+    # Convert photo to Base64 Data URI for 100% database persistence
+    import base64
+    encoded_str = base64.b64encode(contents).decode('utf-8')
+    mime = photo.content_type if photo.content_type else f"image/{file_ext.replace('.', '')}"
+    photo_url = f"data:{mime};base64,{encoded_str}"
 
     player_data = {
         "name": name.strip(),
@@ -196,11 +194,10 @@ async def admin_update_player(
         if file_ext in allowed_exts:
             contents = await photo.read()
             if len(contents) <= 5 * 1024 * 1024:
-                unique_filename = f"player_{uuid.uuid4().hex[:12]}{file_ext}"
-                photo_path = os.path.join(UPLOADS_DIR, unique_filename)
-                with open(photo_path, "wb") as f:
-                    f.write(contents)
-                update_data["photo_url"] = f"/uploads/players/{unique_filename}"
+                import base64
+                encoded_str = base64.b64encode(contents).decode('utf-8')
+                mime = photo.content_type if photo.content_type else f"image/{file_ext.replace('.', '')}"
+                update_data["photo_url"] = f"data:{mime};base64,{encoded_str}"
 
     updated = update_player(player_id, update_data)
     if not updated:
