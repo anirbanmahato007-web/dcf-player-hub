@@ -49,6 +49,31 @@ def read_root():
             return f.read()
     return "<h1>DCF | PLAYER HUB API Running</h1>"
 
+@app.get("/api/db-status")
+def db_status():
+    from app.database import is_postgres, get_db_connection
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) as cnt FROM players")
+        row = cursor.fetchone()
+        conn.close()
+        count = row["cnt"] if hasattr(row, "__getitem__") and "cnt" in row else row[0]
+        return {
+            "status": "healthy",
+            "database_engine": "PostgreSQL (Persistent Cloud DB)" if is_postgres() else "SQLite (Local File DB)",
+            "is_postgres": is_postgres(),
+            "connected": True,
+            "total_players_in_db": count
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "database_engine": "PostgreSQL" if is_postgres() else "SQLite",
+            "connected": False,
+            "error_message": str(e)
+        }
+
 # --- PUBLIC PLAYER ENDPOINTS ---
 
 @app.get("/api/players")
