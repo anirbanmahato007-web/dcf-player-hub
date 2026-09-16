@@ -230,6 +230,13 @@ async def admin_update_player(
 
     return {"success": True, "player": updated}
 
+@app.delete("/api/players/{player_id}")
+def delete_player_public(player_id: str):
+    success = delete_player(player_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Player record not found or already deleted")
+    return {"success": True, "message": f"Player {player_id} deleted successfully"}
+
 @app.delete("/api/admin/players/{player_id}")
 def admin_delete_player(player_id: str, token: str = Depends(verify_token)):
     success = delete_player(player_id)

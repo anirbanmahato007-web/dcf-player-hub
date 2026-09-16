@@ -1,4 +1,4 @@
-// DCF | PLAYER HUB - Interactive Frontend Application Logic
+// DCF | PLAYER HUB - Interactive Frontend Application Logic (Enhanced Deletion & Edge Case Handler)
 
 let currentStep = 1;
 let selectedPhotoFile = null;
@@ -394,6 +394,7 @@ async function openPlayerModal(playerId) {
     });
 
     const statusClass = `status-${p.status.replace(/\s+/g, '-')}`;
+    const safeName = p.name.replace(/'/g, "\\'");
 
     modalContent.innerHTML = `
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
@@ -435,8 +436,9 @@ async function openPlayerModal(playerId) {
             </div>
           </div>
 
-          <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
-            <button class="btn btn-secondary" style="width: 100%;" onclick="closePlayerModal()">CLOSE PROFILE</button>
+          <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary" style="flex: 1;" onclick="closePlayerModal()">CLOSE</button>
+            <button class="btn btn-danger" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;" onclick="deletePlayerSelf('${p.player_id}', '${safeName}')">🗑️ DELETE PROFILE</button>
           </div>
         </div>
       </div>
@@ -450,6 +452,29 @@ async function openPlayerModal(playerId) {
 
 function closePlayerModal() {
   document.getElementById('player-modal').classList.remove('active');
+}
+
+// User Self-Service Deletion
+async function deletePlayerSelf(playerId, playerName) {
+  if (!confirm(`Are you sure you want to delete player profile for ${playerName} (${playerId}) from the official DCF database?`)) return;
+
+  try {
+    const res = await fetch(`/api/players/${playerId}`, {
+      method: 'DELETE'
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showToast("Player Profile Deleted Successfully!", "success");
+      closePlayerModal();
+      loadHomeData();
+      handleSquadSearchFilter();
+    } else {
+      showToast(data.detail || "Failed to delete player profile", "error");
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("Error deleting player profile", "error");
+  }
 }
 
 // --- ADMIN MANAGEMENT PORTAL ---
@@ -549,7 +574,6 @@ async function loadAdminDashboardData() {
       const tr = document.createElement('tr');
       const prefNum = `#${p.preferred_jersey_number}`;
       const offNum = p.official_jersey_number !== null ? `#${p.official_jersey_number}` : `<span style="color: var(--text-dim);">Unassigned</span>`;
-      const statusClass = `status-${p.status.replace(/\s+/g, '-')}`;
 
       tr.innerHTML = `
         <td><img src="${p.photo_url}" class="table-player-thumb" onerror="this.src='/static/img/sample_player_2.svg'"></td>
@@ -559,7 +583,7 @@ async function loadAdminDashboardData() {
         <td>Pref: <strong>${prefNum}</strong> | Off: <strong>${offNum}</strong></td>
         <td>${p.strong_foot}</td>
         <td>
-          <select class="form-select" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onchange="updatePlayerStatusInline('${p.id}', this.value)">
+          <select class="form-select" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onchange="updatePlayerStatusInline('${p.player_id}', this.value)">
             <option value="Active" ${p.status === 'Active' ? 'selected' : ''}>🟢 Active</option>
             <option value="Injured" ${p.status === 'Injured' ? 'selected' : ''}>🔴 Injured</option>
             <option value="Unavailable" ${p.status === 'Unavailable' ? 'selected' : ''}>⚪ Unavailable</option>
@@ -569,8 +593,8 @@ async function loadAdminDashboardData() {
           </select>
         </td>
         <td style="text-align: right;">
-          <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick='openAdminEditModal(${JSON.stringify(p)})'>EDIT</button>
-          <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; margin-left: 0.4rem;" onclick="deletePlayerRecord('${p.id}')">DELETE</button>
+          <button class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick='openAdminEditModal(${JSON.stringify(p)})'>EDIT</button>
+          <button class="btn btn-danger" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; margin-left: 0.4rem;" onclick="deletePlayerRecord('${p.player_id}')">DELETE</button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -592,19 +616,23 @@ async function updatePlayerStatusInline(playerId, newStatus) {
       headers: { 'Authorization': `Bearer ${adminToken}` },
       body: formData
     });
-    if (res.ok) {
-      showToast("Player status updated!", "success");
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showToast(`Status updated to ${newStatus}`, "success");
       loadAdminDashboardData();
+      loadHomeData();
+      handleSquadSearchFilter();
     } else {
-      showToast("Failed to update status", "error");
+      showToast(data.detail || "Failed to update status", "error");
     }
   } catch (err) {
     console.error(err);
+    showToast("Error updating player status", "error");
   }
 }
 
 function openAdminEditModal(player) {
-  document.getElementById('edit-player-id').value = player.id;
+  document.getElementById('edit-player-id').value = player.player_id || player.id;
   document.getElementById('edit-name').value = player.name;
   document.getElementById('edit-primary-pos').value = player.primary_position;
   document.getElementById('edit-playing-positions').value = player.playing_positions;
@@ -646,12 +674,15 @@ async function handleAdminUpdateSubmit(event) {
       body: formData
     });
 
-    if (res.ok) {
+    const data = await res.json();
+    if (res.ok && data.success) {
       showToast("Player updated successfully!", "success");
       closeAdminEditModal();
       loadAdminDashboardData();
+      loadHomeData();
+      handleSquadSearchFilter();
     } else {
-      showToast("Update failed", "error");
+      showToast(data.detail || "Update failed", "error");
     }
   } catch (err) {
     console.error(err);
@@ -661,21 +692,25 @@ async function handleAdminUpdateSubmit(event) {
 
 async function deletePlayerRecord(playerId) {
   if (!adminToken) return;
-  if (!confirm("Are you sure you want to delete this player from the official DCF database?")) return;
+  if (!confirm(`Are you sure you want to delete player (${playerId}) from the official DCF database?`)) return;
 
   try {
     const res = await fetch(`/api/admin/players/${playerId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${adminToken}` }
     });
-    if (res.ok) {
-      showToast("Player deleted successfully", "success");
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showToast("Player record deleted successfully", "success");
       loadAdminDashboardData();
+      loadHomeData();
+      handleSquadSearchFilter();
     } else {
-      showToast("Failed to delete player", "error");
+      showToast(data.detail || "Failed to delete player", "error");
     }
   } catch (err) {
     console.error(err);
+    showToast("Error deleting player record", "error");
   }
 }
 

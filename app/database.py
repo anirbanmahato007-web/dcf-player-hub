@@ -16,7 +16,6 @@ def get_db_connection():
     if is_postgres():
         import psycopg2
         import psycopg2.extras
-        # Fix Render postgres:// schema if needed for psycopg2
         url = DATABASE_URL
         if url.startswith("postgres://"):
             url = url.replace("postgres://", "postgresql://", 1)
@@ -74,7 +73,7 @@ def generate_player_id():
     row = cursor.fetchone()
     conn.close()
     if row:
-        next_id = row["id"] + 1
+        next_id = (row["id"] if isinstance(row, dict) else row[0]) + 1
     else:
         next_id = 1
     return f"DCF-{next_id:03d}"
@@ -116,13 +115,14 @@ def get_all_players(search=None, primary_pos=None, specific_pos=None, foot=None,
     conn = get_db_connection()
     cursor = conn.cursor()
     ph = "%s" if is_postgres() else "?"
+    like_op = "ILIKE" if is_postgres() else "LIKE"
 
     query = "SELECT * FROM players WHERE 1=1"
     params = []
 
     if search:
         search_term = f"%{search.strip()}%"
-        query += f" AND (name LIKE {ph} OR player_id LIKE {ph} OR CAST(preferred_jersey_number AS TEXT) LIKE {ph} OR CAST(official_jersey_number AS TEXT) LIKE {ph} OR primary_position LIKE {ph} OR playing_positions LIKE {ph})"
+        query += f" AND (name {like_op} {ph} OR player_id {like_op} {ph} OR CAST(preferred_jersey_number AS TEXT) {like_op} {ph} OR CAST(official_jersey_number AS TEXT) {like_op} {ph} OR primary_position {like_op} {ph} OR playing_positions {like_op} {ph})"
         params.extend([search_term, search_term, search_term, search_term, search_term, search_term])
 
     if primary_pos and primary_pos.lower() != "all":
@@ -130,7 +130,7 @@ def get_all_players(search=None, primary_pos=None, specific_pos=None, foot=None,
         params.append(primary_pos)
 
     if specific_pos and specific_pos.lower() != "all":
-        query += f" AND (playing_positions LIKE {ph} OR playing_positions = {ph})"
+        query += f" AND (playing_positions {like_op} {ph} OR playing_positions = {ph})"
         params.extend([f"%{specific_pos}%", specific_pos])
 
     if foot and foot.lower() != "all":
@@ -153,13 +153,7 @@ def get_player_by_id(player_id):
     cursor = conn.cursor()
     ph = "%s" if is_postgres() else "?"
     
-    # Try integer match if numeric, or string match
-    try:
-        pid_int = int(player_id)
-        cursor.execute(f"SELECT * FROM players WHERE player_id = {ph} OR id = {ph}", (str(player_id), pid_int))
-    except ValueError:
-        cursor.execute(f"SELECT * FROM players WHERE player_id = {ph}", (player_id,))
-
+    cursor.execute(f"SELECT * FROM players WHERE player_id = {ph} OR CAST(id AS TEXT) = {ph}", (str(player_id), str(player_id)))
     row = cursor.fetchone()
     conn.close()
     return dict(row) if row else None
@@ -222,53 +216,65 @@ def delete_player(player_id):
     cursor = conn.cursor()
     ph = "%s" if is_postgres() else "?"
 
-    try:
-        pid_int = int(player_id)
-        cursor.execute(f"DELETE FROM players WHERE id = {ph} OR player_id = {ph}", (pid_int, str(player_id)))
-    except ValueError:
-        cursor.execute(f"DELETE FROM players WHERE player_id = {ph}", (player_id,))
+    cursor.execute(f"SELECT id FROM players WHERE player_id = {ph} OR CAST(id AS TEXT) = {ph}", (str(player_id), str(player_id)))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return False
 
-    affected = cursor.rowcount
+    target_id = row["id"] if isinstance(row, dict) else row[0]
+    cursor.execute(f"DELETE FROM players WHERE id = {ph}", (target_id,))
     conn.commit()
     conn.close()
-    return affected > 0
+    return True
 
 def get_dashboard_stats():
     conn = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute("SELECT COUNT(*) as total FROM players")
-    total = cursor.fetchone()["total"]
+    row = cursor.fetchone()
+    total = row["total"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE status = 'Active'")
-    active = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    active = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE status = 'Injured'")
-    injured = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    injured = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE status = 'Unavailable'")
-    unavailable = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    unavailable = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE status = 'Trial'")
-    trial = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    trial = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE status = 'New Player'")
-    new_player = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    new_player = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE status = 'Temporarily Inactive'")
-    temporarily_inactive = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    temporarily_inactive = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE primary_position = 'Goalkeeper'")
-    gk = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    gk = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE primary_position = 'Defender'")
-    defenders = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    defenders = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE primary_position = 'Midfielder'")
-    midfielders = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    midfielders = row["cnt"] if isinstance(row, dict) else row[0]
 
     cursor.execute("SELECT COUNT(*) as cnt FROM players WHERE primary_position = 'Forward'")
-    forwards = cursor.fetchone()["cnt"]
+    row = cursor.fetchone()
+    forwards = row["cnt"] if isinstance(row, dict) else row[0]
 
     conn.close()
 
@@ -304,7 +310,7 @@ def check_jersey_conflicts():
     for row in rows:
         num = row["preferred_jersey_number"]
         count = row["player_count"]
-        cursor.execute(f"SELECT player_id, name, official_jersey_number FROM players WHERE preferred_jersey_number = {ph}", (num,))
+        cursor.execute(f"SELECT id, player_id, name, official_jersey_number FROM players WHERE preferred_jersey_number = {ph}", (num,))
         players = [dict(p) for p in cursor.fetchall()]
         conflicts.append({
             "jersey_number": num,
