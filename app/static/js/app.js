@@ -532,6 +532,11 @@ async function loadAdminDashboardData() {
     const statsRes = await fetch('/api/admin/stats', {
       headers: { 'Authorization': `Bearer ${adminToken}` }
     });
+    if (statsRes.status === 401) {
+      adminLogout();
+      showToast("Admin session expired. Please log in again with password admin123.", "error");
+      return;
+    }
     if (statsRes.ok) {
       const stats = await statsRes.json();
       document.getElementById('admin-stat-total').textContent = stats.total_players;
