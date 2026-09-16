@@ -4,7 +4,9 @@ import csv
 import io
 from datetime import datetime
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "dcf_player_hub.db")
+DATA_DIR = os.environ.get("DATA_DIR", os.path.dirname(__file__))
+os.makedirs(DATA_DIR, exist_ok=True)
+DB_PATH = os.path.join(DATA_DIR, "dcf_player_hub.db")
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)

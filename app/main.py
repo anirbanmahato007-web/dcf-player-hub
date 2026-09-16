@@ -26,14 +26,16 @@ app.add_middleware(
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.environ.get("DATA_DIR", BASE_DIR)
 STATIC_DIR = os.path.join(BASE_DIR, "static")
-UPLOADS_DIR = os.path.join(BASE_DIR, "uploads", "players")
+UPLOADS_BASE_DIR = os.path.join(DATA_DIR, "uploads")
+UPLOADS_DIR = os.path.join(UPLOADS_BASE_DIR, "players")
 
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 # Mount Static & Uploads
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-app.mount("/uploads", StaticFiles(directory=os.path.join(BASE_DIR, "uploads")), name="uploads")
+app.mount("/uploads", StaticFiles(directory=UPLOADS_BASE_DIR), name="uploads")
 
 @app.on_event("startup")
 def startup_event():
