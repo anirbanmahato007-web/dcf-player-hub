@@ -1006,12 +1006,12 @@ body {
 
 /* Card Themes & Glows */
 .pos-card.gk-theme {
-  border: 1.5px solid rgba(34, 197, 94, 0.4);
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.12);
+  border: 1.5px solid rgba(229, 193, 88, 0.4);
+  box-shadow: 0 0 20px rgba(229, 193, 88, 0.12);
 }
 .pos-card.gk-theme:hover {
-  border-color: #22C55E;
-  box-shadow: 0 0 35px rgba(34, 197, 94, 0.35);
+  border-color: #E5C158;
+  box-shadow: 0 0 35px rgba(229, 193, 88, 0.35);
   transform: translateY(-8px);
 }
 
@@ -1026,12 +1026,12 @@ body {
 }
 
 .pos-card.mid-theme {
-  border: 1.5px solid rgba(229, 193, 88, 0.4);
-  box-shadow: 0 0 20px rgba(229, 193, 88, 0.12);
+  border: 1.5px solid rgba(34, 197, 94, 0.4);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.12);
 }
 .pos-card.mid-theme:hover {
-  border-color: #E5C158;
-  box-shadow: 0 0 35px rgba(229, 193, 88, 0.35);
+  border-color: #22C55E;
+  box-shadow: 0 0 35px rgba(34, 197, 94, 0.35);
   transform: translateY(-8px);
 }
 
@@ -1063,9 +1063,9 @@ body {
   text-transform: uppercase;
 }
 
-.gk-traits { color: #86EFAC; }
+.gk-traits { color: #FDE047; }
 .def-traits { color: #93C5FD; }
-.mid-traits { color: #FDE047; }
+.mid-traits { color: #86EFAC; }
 .fwd-traits { color: #FCA5A5; }
 
 .pos-bg-num {
@@ -1150,9 +1150,9 @@ body {
   cursor: pointer;
 }
 
-.gk-theme .pos-card-action-btn { border: 1px solid rgba(34, 197, 94, 0.6); color: #86EFAC; }
+.gk-theme .pos-card-action-btn { border: 1px solid rgba(229, 193, 88, 0.6); color: #FDE047; }
 .def-theme .pos-card-action-btn { border: 1px solid rgba(59, 130, 246, 0.6); color: #93C5FD; }
-.mid-theme .pos-card-action-btn { border: 1px solid rgba(229, 193, 88, 0.6); color: #FDE047; }
+.mid-theme .pos-card-action-btn { border: 1px solid rgba(34, 197, 94, 0.6); color: #86EFAC; }
 .fwd-theme .pos-card-action-btn { border: 1px solid rgba(239, 68, 68, 0.6); color: #FCA5A5; }
 
 .pos-card:hover .pos-card-action-btn {
