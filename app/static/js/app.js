@@ -73,31 +73,50 @@ async function loadHomeData() {
     const injured = players.filter(p => p.status === 'Injured').length;
     const trial = players.filter(p => p.status === 'Trial').length;
 
-    document.getElementById('home-stat-total').textContent = total;
-    document.getElementById('home-stat-active').textContent = active;
-    document.getElementById('home-stat-injured').textContent = injured;
-    document.getElementById('home-stat-trial').textContent = trial;
+    const elTotal = document.getElementById('home-stat-total');
+    if (elTotal) elTotal.textContent = total;
+    const elActive = document.getElementById('home-stat-active');
+    if (elActive) elActive.textContent = active;
+    const elInjured = document.getElementById('home-stat-injured');
+    if (elInjured) elInjured.textContent = injured;
+    const elTrial = document.getElementById('home-stat-trial');
+    if (elTrial) elTrial.textContent = trial;
 
-    // Position breakdown
-    document.getElementById('breakdown-gk').textContent = players.filter(p => p.primary_position === 'Goalkeeper').length;
-    document.getElementById('breakdown-def').textContent = players.filter(p => p.primary_position === 'Defender').length;
-    document.getElementById('breakdown-mid').textContent = players.filter(p => p.primary_position === 'Midfielder').length;
-    document.getElementById('breakdown-fwd').textContent = players.filter(p => p.primary_position === 'Forward').length;
+    // Position counts
+    const gkCount = players.filter(p => p.primary_position === 'Goalkeeper').length;
+    const defCount = players.filter(p => p.primary_position === 'Defender').length;
+    const midCount = players.filter(p => p.primary_position === 'Midfielder').length;
+    const fwdCount = players.filter(p => p.primary_position === 'Forward').length;
 
-    // Render 4-6 featured players
-    const featuredGrid = document.getElementById('home-featured-grid');
-    featuredGrid.innerHTML = '';
-    const featured = players.slice(0, 6);
+    const elGk = document.getElementById('home-gk-count');
+    if (elGk) elGk.textContent = gkCount;
+    const elDef = document.getElementById('home-def-count');
+    if (elDef) elDef.textContent = defCount;
+    const elMid = document.getElementById('home-mid-count');
+    if (elMid) elMid.textContent = midCount;
+    const elFwd = document.getElementById('home-fwd-count');
+    if (elFwd) elFwd.textContent = fwdCount;
 
-    if (featured.length === 0) {
-      featuredGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem;">No registered players found yet. Be the first to join!</div>`;
-    } else {
-      featured.forEach(p => {
-        featuredGrid.appendChild(createPlayerCardElement(p));
-      });
-    }
+    const bdGk = document.getElementById('breakdown-gk');
+    if (bdGk) bdGk.textContent = gkCount;
+    const bdDef = document.getElementById('breakdown-def');
+    if (bdDef) bdDef.textContent = defCount;
+    const bdMid = document.getElementById('breakdown-mid');
+    if (bdMid) bdMid.textContent = midCount;
+    const bdFwd = document.getElementById('breakdown-fwd');
+    if (bdFwd) bdFwd.textContent = fwdCount;
+
   } catch (err) {
     console.error("Error loading home data:", err);
+  }
+}
+
+function filterSquadByPosition(pos) {
+  switchView('squad');
+  const posFilterSelect = document.getElementById('filter-primary-pos');
+  if (posFilterSelect) {
+    posFilterSelect.value = pos;
+    handleSquadSearchFilter();
   }
 }
 
