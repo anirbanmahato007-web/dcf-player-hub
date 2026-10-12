@@ -1087,6 +1087,58 @@ body {
   margin: 0.5rem 0;
   position: relative;
   z-index: 1;
+  border-radius: 12px;
+}
+
+.gk-theme .pos-card-art {
+  background: radial-gradient(circle, rgba(229, 193, 88, 0.22) 0%, transparent 72%);
+}
+.def-theme .pos-card-art {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.22) 0%, transparent 72%);
+}
+.mid-theme .pos-card-art {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.22) 0%, transparent 72%);
+}
+.fwd-theme .pos-card-art {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.22) 0%, transparent 72%);
+}
+
+.pos-silhouette-img {
+  max-height: 195px;
+  max-width: 88%;
+  object-fit: contain;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), filter 0.35s ease;
+  user-select: none;
+  pointer-events: none;
+}
+
+.gk-theme .pos-silhouette-img {
+  filter: drop-shadow(0 0 14px rgba(229, 193, 88, 0.55));
+}
+.def-theme .pos-silhouette-img {
+  filter: drop-shadow(0 0 14px rgba(59, 130, 246, 0.55));
+}
+.mid-theme .pos-silhouette-img {
+  filter: drop-shadow(0 0 14px rgba(34, 197, 94, 0.55));
+}
+.fwd-theme .pos-silhouette-img {
+  filter: drop-shadow(0 0 14px rgba(239, 68, 68, 0.55));
+}
+
+.pos-card:hover .pos-silhouette-img {
+  transform: scale(1.06);
+}
+.gk-theme:hover .pos-silhouette-img {
+  filter: drop-shadow(0 0 24px rgba(229, 193, 88, 0.85));
+}
+.def-theme:hover .pos-silhouette-img {
+  filter: drop-shadow(0 0 24px rgba(59, 130, 246, 0.85));
+}
+.mid-theme:hover .pos-silhouette-img {
+  filter: drop-shadow(0 0 24px rgba(34, 197, 94, 0.85));
+}
+.fwd-theme:hover .pos-silhouette-img {
+  filter: drop-shadow(0 0 24px rgba(239, 68, 68, 0.85));
 }
 
 /* Card Bottom Info */
